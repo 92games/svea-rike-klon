@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace SRK1_grid_for_battle
@@ -9,8 +8,8 @@ namespace SRK1_grid_for_battle
         public float randomRange = 0.25f;
         public D_Grid grid;
 
-        private int _gridDepth = 0;
-        private int _gridWidth = 0;
+        public int _gridDepth = 0;
+        public int _gridWidth = 0;
 
         // Start is called before the first frame update
         void Start()
@@ -23,16 +22,15 @@ namespace SRK1_grid_for_battle
             UpdateableGrid();
         }
 
-        void InstantiateAndAddNode(int p_x, int p_z)
+        GameObject InstantiateAndAddNode(int p_x, int p_z)
         {
             grid.gridNodes ??= new();
-
 
             if(grid.gridNodes.Count < grid.depth * grid.width)
             {
                 int nodeX = p_x;
                 int nodeZ = p_z;
-                Vector3 nodePosition = new Vector3(nodeX * grid.nodeSizeWidth + transform.position.x, transform.position.y + UnityEngine.Random.Range(-randomRange, randomRange), nodeZ * grid.nodeSizeDepth + transform.position.z);
+                Vector3 nodePosition = new(nodeX * grid.nodeSizeWidth + transform.position.x - grid.nodeSizeWidth, transform.position.y + UnityEngine.Random.Range(-randomRange, randomRange), nodeZ * grid.nodeSizeDepth + transform.position.z - grid.nodeSizeDepth);
                 GameObject node = Instantiate(grid.nodeObject, Vector3.zero, Quaternion.identity);
                 D_GridNode gridNode = node.AddComponent<D_GridNode>();
                 gridNode.Initialize(nodeX, nodeZ, grid.nodeSizeWidth, grid.nodeSizeDepth);
@@ -41,7 +39,11 @@ namespace SRK1_grid_for_battle
                 node.transform.parent = transform;
                 node.transform.Translate(nodePosition);
                 grid.gridNodes.Add(gridNode);
+
+                return node;
             }
+
+            return null;
         }
 
         void RemoveNode(int p_x, int p_z)
@@ -56,9 +58,9 @@ namespace SRK1_grid_for_battle
 
         void AddDepth()
         {
-            for(int z = _gridDepth; z < grid.depth; z++)
+            for(int z = _gridDepth + 1; z <= grid.depth; z++)
             {
-                for(int x = 0; x < _gridWidth; x++)
+                for(int x = 1; x <= _gridWidth; x++)
                 {
                     InstantiateAndAddNode(x, z);
                 }
@@ -69,9 +71,9 @@ namespace SRK1_grid_for_battle
 
         void RemoveDepth()
         {
-            for(int z = _gridDepth; z >= grid.depth; z--)
+            for(int z = _gridDepth; z > grid.depth; z--)
             {
-                for(int x = _gridWidth -1 ; x >= 0; x--)
+                for(int x = _gridWidth; x >= 1; x--)
                 {
                     RemoveNode(x, z);
                 }
@@ -82,9 +84,9 @@ namespace SRK1_grid_for_battle
 
         void AddWidth()
         {
-            for(int x = _gridWidth; x < grid.width; x++)
+            for(int x = _gridWidth + 1; x <= grid.width; x++)
             {
-                for(int z = 0; z < _gridDepth; z++)
+                for(int z = 1; z <= _gridDepth; z++)
                 {
                     InstantiateAndAddNode(x, z);
                 }
@@ -95,9 +97,9 @@ namespace SRK1_grid_for_battle
 
         void RemoveWidth()
         {
-            for(int x = _gridWidth; x >= grid.width; x--)
+            for(int x = _gridWidth; x > grid.width; x--)
             {
-                for(int z = _gridDepth - 1; z >= 0; z--)
+                for(int z = _gridDepth; z >= 1; z--)
                 {
                     RemoveNode(x, z);
                 }
@@ -113,7 +115,7 @@ namespace SRK1_grid_for_battle
                 AddWidth();
             }
 
-            if(_gridWidth > grid.width && _gridWidth > 0)
+            if(_gridWidth > grid.width && _gridWidth > 1)
             {
                 RemoveWidth();
             }
@@ -123,7 +125,7 @@ namespace SRK1_grid_for_battle
                 AddDepth();
             }
 
-            if(_gridDepth > grid.depth && _gridDepth > 0)
+            if(_gridDepth > grid.depth && _gridDepth > 1)
             {
                 RemoveDepth();
             }
