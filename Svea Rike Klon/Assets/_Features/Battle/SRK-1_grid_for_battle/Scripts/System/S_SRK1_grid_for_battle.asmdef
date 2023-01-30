@@ -1,0 +1,16 @@
+{
+    "name": "S_SRK1_grid_for_battle",
+    "rootNamespace": "SRK1_grid_for_battle",
+    "references": [
+        "GUID:a0eac1920a4e24f408423ba106ccd805"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
